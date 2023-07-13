@@ -26,55 +26,56 @@ const val REQRES_BASEURL = "https://reqres.in/"
 @Module
 object NetworkModule {
 
+    /**
     @Provides
     @Singleton
     @AccessToken
     fun provideOkHttpClientWithAccessToken(): OkHttpClient {
-    return OkHttpClient.Builder().run {
-    addInterceptor(HttpLoggingInterceptor().apply {
-    level = HttpLoggingInterceptor.Level.BODY
-    })
-    addInterceptor { chain ->
-    val newRequest =
-    chain.request()
-    .newBuilder()
-    .addHeader("Authorization", "Bearer ${여기 액세스 토큰}").build()
-    chain.proceed(newRequest)
-    }
-    connectTimeout(10, TimeUnit.SECONDS)
-    readTimeout(15, TimeUnit.SECONDS)
-    callTimeout(10, TimeUnit.SECONDS)
-    build()
-    }
+        return OkHttpClient.Builder().run {
+            addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            addInterceptor { chain ->
+                val newRequest =
+                    chain.request()
+                        .newBuilder()
+                        .addHeader("Authorization", "Bearer ${여기 액세스 토큰}").build()
+                chain.proceed(newRequest)
+            }
+            connectTimeout(10, TimeUnit.SECONDS)
+            readTimeout(15, TimeUnit.SECONDS)
+            callTimeout(10, TimeUnit.SECONDS)
+            build()
+        }
     }
 
     @Provides
     @Singleton
     @RefreshToken
     fun provideOkHttpClientWithRefreshToken(): OkHttpClient {
-    return OkHttpClient.Builder().run {
-    addInterceptor(HttpLoggingInterceptor().apply {
-    level = HttpLoggingInterceptor.Level.BODY
-    })
-    addInterceptor { chain ->
-    val newRequest =
-    chain.request()
-    .newBuilder()
-    .addHeader("Authorization", "Bearer ${여기 리프레시 토큰}").build()
-    chain.proceed(newRequest)
+        return OkHttpClient.Builder().run {
+            addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            addInterceptor { chain ->
+                val newRequest =
+                    chain.request()
+                        .newBuilder()
+                        .addHeader("Authorization", "Bearer ${여기 리프레시 토큰}").build()
+                chain.proceed(newRequest)
+            }
+            readTimeout(15, TimeUnit.SECONDS)
+            connectTimeout(10, TimeUnit.SECONDS)
+            callTimeout(10, TimeUnit.SECONDS)
+            build()
+        }
     }
-    readTimeout(15, TimeUnit.SECONDS)
-    connectTimeout(10, TimeUnit.SECONDS)
-    callTimeout(10, TimeUnit.SECONDS)
-    build()
-    }
-    }
-
+\
+    **/
 
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
-
         return OkHttpClient.Builder().run {
             addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
@@ -88,22 +89,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideReqresApi(okHttpClient: OkHttpClient): ReqresApi {
-
-        val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.MILLISECONDS)
-            .readTimeout(15, TimeUnit.MICROSECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
-            .callTimeout(30, TimeUnit.MINUTES)
-            .build()
-
-        return Retrofit.Builder()
-            .client(okHttpClient)
+    fun provideReqresApi(okHttpClient: OkHttpClient): ReqresApi =
+        Retrofit.Builder().client(okHttpClient)
             .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
-            .baseUrl(REQRES_BASEURL)
-            .build()
-            .create(ReqresApi::class.java)
-    }
+            .baseUrl(REQRES_BASEURL).build().create(ReqresApi::class.java)
 
     @Provides
     @Singleton
