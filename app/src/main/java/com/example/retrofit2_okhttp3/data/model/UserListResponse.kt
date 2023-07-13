@@ -3,14 +3,14 @@ package com.example.retrofit2_okhttp3.data.model
 import com.example.retrofit2_okhttp3.domain.User
 
 data class UserListResponse(
-    val `data`: List<Data>,
+    val `data`: List<UserResponse>,
     val page: Int,
     val per_page: Int,
     val support: Support,
     val total: Int,
     val total_pages: Int
 ) {
-    data class Data(
+    data class UserResponse(
         val avatar: String,
         val email: String,
         val first_name: String,
@@ -24,4 +24,4 @@ data class UserListResponse(
     )
 }
 
-fun UserListResponse.Data.toUser() = User(avatar, email, first_name, id, last_name)
+fun UserListResponse.UserResponse.toUser() = User(avatar, email, first_name, id, last_name)

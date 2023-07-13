@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.example.retrofit2_okhttp3.domain.GetUserUsecase
 import com.example.retrofit2_okhttp3.domain.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,11 +25,7 @@ class MainViewModel @Inject constructor(private val getUserUsecase: GetUserUseca
     private val _user = MutableStateFlow<UserState>(UserState.Init)
     val user get() = _user
 
-    /**
-
-    private val _user = MutableStateFlow<UiState>(UiState.Loading)
-    val user get() = _user
-     **/
+    val pagingData = getUserUsecase.getUserList().cachedIn(viewModelScope)
 
     fun callUser() {
         viewModelScope.launch {

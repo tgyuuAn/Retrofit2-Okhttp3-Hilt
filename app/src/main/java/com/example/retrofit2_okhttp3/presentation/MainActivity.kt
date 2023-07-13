@@ -17,6 +17,7 @@ import com.example.retrofit2_okhttp3.domain.User
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var rvAdapter: RecyclerViewAdapter
+    lateinit var rv2Adapter: PagingAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,16 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+
+                lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        pagingData.collectLatest { data ->
+                            log("MainActivity : RV2 Collect")
+                            rv2Adapter.submitData(data)
+                        }
+                    }
+                }
+
                 lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
                         user.collect { UserState ->
@@ -76,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                                     LAV.playAnimation()
                                     RV.visibility = View.GONE
                                     toast("호출에 실패하셨습니다.")
-                                    mainViewModel.setUserState(MainViewModel.UserState.Init,1500L)
+                                    mainViewModel.setUserState(MainViewModel.UserState.Init, 1500L)
                                 }
                             }
                         }
@@ -93,6 +105,12 @@ class MainActivity : AppCompatActivity() {
         val rv = binding.RV
         rvAdapter = RecyclerViewAdapter()
         rv.adapter = rvAdapter
+        rv.layoutManager = LinearLayoutManager(this@MainActivity)
+        rv.addItemDecoration(RecyclerViewDecoration(this@MainActivity))
+
+        val rv2 = binding.RV2
+        rv2Adapter = PagingAdapter()
+        rv2.adapter = rv2Adapter
         rv.layoutManager = LinearLayoutManager(this@MainActivity)
         rv.addItemDecoration(RecyclerViewDecoration(this@MainActivity))
     }

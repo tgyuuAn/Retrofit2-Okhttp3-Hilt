@@ -4,7 +4,7 @@ import com.example.retrofit2_okhttp3.data.UserRepositoryImpl
 import com.example.retrofit2_okhttp3.data.remotedatasource.ReqresApi
 import com.example.retrofit2_okhttp3.data.remotedatasource.UserRemoteDataSource
 import com.example.retrofit2_okhttp3.data.remotedatasource.UserRemoteDataSourceImpl
-import com.example.retrofit2_okhttp3.domain.GetUserUsecase
+import com.example.retrofit2_okhttp3.data.remotedatasource.UserRemotePagingSource
 import com.example.retrofit2_okhttp3.domain.UserRepository
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -17,7 +17,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 const val REQRES_BASEURL = "https://reqres.in/"
@@ -31,47 +30,47 @@ object NetworkModule {
     @Singleton
     @AccessToken
     fun provideOkHttpClientWithAccessToken(): OkHttpClient {
-        return OkHttpClient.Builder().run {
-            addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-            addInterceptor { chain ->
-                val newRequest =
-                    chain.request()
-                        .newBuilder()
-                        .addHeader("Authorization", "Bearer ${여기 액세스 토큰}").build()
-                chain.proceed(newRequest)
-            }
-            connectTimeout(10, TimeUnit.SECONDS)
-            readTimeout(15, TimeUnit.SECONDS)
-            callTimeout(10, TimeUnit.SECONDS)
-            build()
-        }
+    return OkHttpClient.Builder().run {
+    addInterceptor(HttpLoggingInterceptor().apply {
+    level = HttpLoggingInterceptor.Level.BODY
+    })
+    addInterceptor { chain ->
+    val newRequest =
+    chain.request()
+    .newBuilder()
+    .addHeader("Authorization", "Bearer ${여기 액세스 토큰}").build()
+    chain.proceed(newRequest)
+    }
+    connectTimeout(10, TimeUnit.SECONDS)
+    readTimeout(15, TimeUnit.SECONDS)
+    callTimeout(10, TimeUnit.SECONDS)
+    build()
+    }
     }
 
     @Provides
     @Singleton
     @RefreshToken
     fun provideOkHttpClientWithRefreshToken(): OkHttpClient {
-        return OkHttpClient.Builder().run {
-            addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-            addInterceptor { chain ->
-                val newRequest =
-                    chain.request()
-                        .newBuilder()
-                        .addHeader("Authorization", "Bearer ${여기 리프레시 토큰}").build()
-                chain.proceed(newRequest)
-            }
-            readTimeout(15, TimeUnit.SECONDS)
-            connectTimeout(10, TimeUnit.SECONDS)
-            callTimeout(10, TimeUnit.SECONDS)
-            build()
-        }
+    return OkHttpClient.Builder().run {
+    addInterceptor(HttpLoggingInterceptor().apply {
+    level = HttpLoggingInterceptor.Level.BODY
+    })
+    addInterceptor { chain ->
+    val newRequest =
+    chain.request()
+    .newBuilder()
+    .addHeader("Authorization", "Bearer ${여기 리프레시 토큰}").build()
+    chain.proceed(newRequest)
     }
-\
-    **/
+    readTimeout(15, TimeUnit.SECONDS)
+    connectTimeout(10, TimeUnit.SECONDS)
+    callTimeout(10, TimeUnit.SECONDS)
+    build()
+    }
+    }
+    \
+     **/
 
     @Provides
     @Singleton
@@ -101,10 +100,14 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(userRemoteDataSource: UserRemoteDataSource): UserRepository =
-        UserRepositoryImpl(userRemoteDataSource)
+    fun provideUserRepository(
+        userRemoteDataSource: UserRemoteDataSource,
+        userRemotePagingSource: UserRemotePagingSource
+    ): UserRepository =
+        UserRepositoryImpl(userRemoteDataSource, userRemotePagingSource)
 }
 
+/**
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class AccessToken
@@ -112,3 +115,4 @@ annotation class AccessToken
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class RefreshToken
+ **/
