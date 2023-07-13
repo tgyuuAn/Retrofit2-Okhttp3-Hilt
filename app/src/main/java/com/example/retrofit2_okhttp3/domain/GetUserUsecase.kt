@@ -24,6 +24,7 @@ class GetUserUsecase @Inject constructor(private val userRepository: UserReposit
         pager.map { pagingData ->
             pagingData.map {
                 Log.d("tgyuu", "GetUserUseCase : RV2 "+it.toString())
+                Log.d("tgyuu", "GetUserUseCase : RV2 "+it.toUser().toString())
                 it.toUser()
             }
         }

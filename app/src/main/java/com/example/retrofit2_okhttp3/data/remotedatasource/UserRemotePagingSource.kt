@@ -21,7 +21,7 @@ class UserRemotePagingSource @Inject constructor(private val reqresApi: ReqresAp
             return LoadResult.Page(
                 data = response.body()!!.data,
                 prevKey = null,
-                nextKey = nextPageNumber + 1
+                nextKey = if (nextPageNumber + 1 <= 2) nextPageNumber +1 else null
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

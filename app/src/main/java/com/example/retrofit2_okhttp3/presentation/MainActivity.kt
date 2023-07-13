@@ -49,8 +49,8 @@ class MainActivity : AppCompatActivity() {
 
                 lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        pagingData.collectLatest { data ->
-                            log("MainActivity : RV2 Collect")
+                        pagingData.collect { data ->
+                            log("MainActivity : RV2 Collect "+data.toString())
                             rv2Adapter.submitData(data)
                         }
                     }

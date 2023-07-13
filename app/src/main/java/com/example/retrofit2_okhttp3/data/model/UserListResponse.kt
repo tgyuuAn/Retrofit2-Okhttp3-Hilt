@@ -1,7 +1,9 @@
 package com.example.retrofit2_okhttp3.data.model
 
 import com.example.retrofit2_okhttp3.domain.User
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UserListResponse(
     val `data`: List<UserResponse>,
     val page: Int,
@@ -10,6 +12,7 @@ data class UserListResponse(
     val total: Int,
     val total_pages: Int
 ) {
+    @Serializable
     data class UserResponse(
         val avatar: String,
         val email: String,
@@ -18,6 +21,7 @@ data class UserListResponse(
         val last_name: String
     )
 
+    @Serializable
     data class Support(
         val text: String,
         val url: String
